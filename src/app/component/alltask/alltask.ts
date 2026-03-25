@@ -8,6 +8,12 @@ import { Component } from '@angular/core';
   styleUrl: './alltask.css',
 })
 export class Alltask {
+deleteTask(arg0: string) {
+throw new Error('Method not implemented.');
+}
+openModal(_t2: { id: string; title: string; description: string; status: string; createdAt: Date; }) {
+throw new Error('Method not implemented.');
+}
   tasks = [
   {
     id: 'T-001',
