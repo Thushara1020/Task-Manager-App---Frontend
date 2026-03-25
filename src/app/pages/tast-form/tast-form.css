@@ -14,12 +14,10 @@
   display: flex;
   justify-content: center; 
   align-items: center; 
-  padding: 20px;
+  padding: 130px;
 }
 
 .form-container {
-  width: 85%;     
-  max-width: 1200px;
   height: auto;
   min-height: 70vh;
   

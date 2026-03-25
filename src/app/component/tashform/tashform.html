@@ -6,7 +6,7 @@
       <p class="text-slate-500 text-sm font-bold uppercase tracking-widest">Manage your daily workflow</p>
     </div>
     <button (click)="openModal()" 
-      class="px-8 py-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-blue-500 text-white font-black uppercase tracking-[0.15em] shadow-lg hover:scale-105 hover:shadow-indigo-200 transition-all duration-500">
+      class="px-8 py-4 rounded-2xl bg-linear-to-r from-indigo-600 to-blue-500 text-white font-black uppercase tracking-[0.15em] shadow-lg hover:scale-105 hover:shadow-indigo-200 transition-all duration-500">
       + New Task
     </button>
   </div>
@@ -45,7 +45,7 @@
   </div>
 
   @if (showModal) {
-  <div class="fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-md bg-white/60 p-4">
+  <div class="fixed inset-0 z-100 flex items-center justify-center backdrop-blur-md bg-white/60 p-4">
     <div class="relative w-full max-w-lg bg-white border border-gray-100 p-10 rounded-[3rem] shadow-[0_30px_100px_rgba(0,0,0,0.15)] animate-fade-in">
       
       <button (click)="closeModal()" class="absolute top-8 right-8 text-gray-300 hover:text-indigo-600 transition-all">
