@@ -1,0 +1,49 @@
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-6">
+  @for (task of tasks; track task.id) {
+  <div
+       class="relative group overflow-hidden backdrop-blur-3xl bg-black/70 border border-white/20 p-7 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.6)] transition-all duration-500 hover:scale-[1.03] hover:border-cyan-400/60">
+    
+    <div class="absolute -inset-px bg-gradient-to-br from-cyan-500/30 via-transparent to-purple-500/30 rounded-[2.5rem] opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+
+    <div class="relative z-10">
+      <div class="flex justify-between items-center mb-5">
+        <span class="text-[11px] font-black tracking-[0.2em] text-cyan-500/80 uppercase">#{{task.id}}</span>
+        <span
+          class="px-4 py-1.5 rounded-full text-[11px] font-black uppercase border-2 tracking-widest shadow-lg"
+          [class.bg-cyan-950/40]="task.status === 'Pending'"
+          [class.text-cyan-400]="task.status === 'Pending'"
+          [class.border-cyan-400/40]="task.status === 'Pending'"
+          [class.bg-green-950/40]="task.status === 'Completed'"
+          [class.text-green-400]="task.status === 'Completed'"
+          [class.border-green-400/40]="task.status === 'Completed'"
+          [class.bg-purple-950/40]="task.status === 'In Progress'"
+          [class.text-purple-400]="task.status === 'In Progress'"
+          [class.border-purple-400/40]="task.status === 'In Progress'">
+          {{task.status}}
+        </span>
+      </div>
+
+      <h3 class="text-2xl font-black text-white mb-3 leading-tight drop-shadow-sm group-hover:text-cyan-300 transition-colors">
+        {{task.title}}
+      </h3>
+
+      <p class="text-gray-200 text-[15px] leading-relaxed mb-8 line-clamp-3 font-semibold opacity-90 group-hover:opacity-100 transition-opacity">
+        {{task.description}}
+      </p>
+
+      <div class="flex items-center justify-between pt-5 border-t border-white/10">
+        <div class="flex flex-col">
+          <span class="text-[10px] text-gray-500 uppercase font-black tracking-[0.15em] mb-1">Created At</span>
+          <span class="text-sm text-white font-bold tracking-tight">{{task.createdAt | date:'mediumDate'}}</span>
+        </div>
+        
+        <button class="p-3 rounded-2xl bg-white/10 text-white border border-white/10 hover:bg-cyan-500 hover:text-black hover:border-cyan-500 hover:shadow-[0_0_20px_rgba(6,182,212,0.5)] transition-all duration-300">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75h.008v.008H12V6.75zm0 5.25h.008v.008H12V12zm0 5.25h.008v.008H12v-.008z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  }
+</div>
