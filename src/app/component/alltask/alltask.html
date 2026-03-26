@@ -1,4 +1,10 @@
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-6">
+  @if (tasks.length === 0) {
+    <div class="col-span-full text-center py-20 text-slate-400 font-medium">
+      No tasks found. Please wait or add a new task...
+    </div>
+  }
+
   @for (task of tasks; track task.id) {
   <div
        class="relative group overflow-hidden bg-white border border-slate-200 p-8 rounded-[2.5rem] shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.08)] hover:border-blue-400/50">
@@ -20,7 +26,7 @@
           [class.bg-blue-50]="task.status === 'In Progress'"
           [class.text-blue-600]="task.status === 'In Progress'"
           [class.border-blue-100]="task.status === 'In Progress'">
-          {{task.status}}
+          {{task.status || 'No Status'}}
         </span>
       </div>
 
@@ -34,11 +40,15 @@
 
       <div class="flex items-center justify-between pt-6 border-t border-slate-100">
         <div class="flex flex-col">
-          <span class="text-[9px] text-slate-400 uppercase font-black tracking-[0.15em] mb-1">Registration Date</span>
-          <span class="text-sm text-slate-700 font-bold tracking-tight">{{task.createdAt | date:'mediumDate'}}</span>
+          <span class="text-[9px] text-slate-400 uppercase font-black tracking-[0.15em] mb-1">Created At</span>
+          <span class="text-sm text-slate-700 font-bold tracking-tight">
+            {{ (task.createdAt | date:'mediumDate') || 'Not Set' }}
+          </span>
         </div>
         
-        <button class="p-3 rounded-2xl bg-slate-50 text-slate-400 border border-slate-100 hover:bg-blue-600 hover:text-white hover:border-blue-600 hover:shadow-lg hover:shadow-blue-200 transition-all duration-300 group/btn">
+        <button 
+          (click)="openModal(task)"
+          class="p-3 rounded-2xl bg-slate-50 text-slate-400 border border-slate-100 hover:bg-blue-600 hover:text-white hover:border-blue-600 hover:shadow-lg hover:shadow-blue-200 transition-all duration-300 group/btn">
           <svg class="w-5 h-5 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75h.008v.008H12V6.75zm0 5.25h.008v.008H12V12zm0 5.25h.008v.008H12v-.008z"></path>
           </svg>
