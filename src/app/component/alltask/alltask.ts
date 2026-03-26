@@ -1,41 +1,68 @@
-import { DatePipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { DatePipe, CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-alltask',
-  imports: [DatePipe],
+  standalone: true,
+  imports: [DatePipe, CommonModule], 
   templateUrl: './alltask.html',
   styleUrl: './alltask.css',
 })
-export class Alltask {
-deleteTask(arg0: string) {
-throw new Error('Method not implemented.');
-}
-openModal(_t2: { id: string; title: string; description: string; status: string; createdAt: Date; }) {
-throw new Error('Method not implemented.');
-}
-  tasks = [
-  {
-    id: 'T-001',
-    title: 'Develop Smart ERP Dashboard',
-    description: 'Implement real-time revenue tracking and order status animations using Angular and Spring Boot.',
-    status: 'In Progress',
-    createdAt: new Date()
-  },
-  {
-    id: 'T-002',
-    title: 'Cybersecurity Audit',
-    description: 'Perform network reconnaissance and vulnerability assessment using Nmap and Metasploit.',
-    status: 'Pending',
-    createdAt: new Date('2026-03-20')
-  },
-  {
-    id: 'T-003',
-    title: 'Flutter Social Media App',
-    description: 'Finalize the SQLite DatabaseHelper logic for local post storage and likes tracking.',
-    status: 'Completed',
-    createdAt: new Date('2026-03-22')
-  }
-];
+export class Alltask implements OnInit {
+  
+  tasks: any[] = []; 
+  private apiUrl = 'http://localhost:8080/api/tasks';
+  private readonly storageKey = 'task-manager.tasks';
 
+  constructor(private http: HttpClient) {}
+
+  ngOnInit(): void {
+    this.loadCachedTasks();
+    this.loadTasks(); 
+  }
+
+  loadTasks() {
+    this.http.get<any[]>(this.apiUrl).subscribe({
+      next: (data) => {
+        this.tasks = data;
+        this.saveTasksToCache(data);
+        console.log('Tasks loaded:', data);
+      },
+      error: (error) => {
+        this.loadCachedTasks();
+        console.error('Error fetching tasks:', error);
+      }
+    });
+  }
+
+  deleteTask(id: number) {
+    if(confirm('Are you sure you want to delete this task?')) {
+      this.http.delete(`${this.apiUrl}/${id}`).subscribe(() => {
+        this.tasks = this.tasks.filter((task) => task.id !== id);
+        this.saveTasksToCache(this.tasks);
+      });
+    }
+  }
+
+  openModal(task: any) {
+    console.log('Opening task:', task);
+  }
+
+  private loadCachedTasks(): void {
+    const cachedData = localStorage.getItem(this.storageKey);
+    if (!cachedData) {
+      return;
+    }
+
+    try {
+      this.tasks = JSON.parse(cachedData);
+    } catch {
+      localStorage.removeItem(this.storageKey);
+    }
+  }
+
+  private saveTasksToCache(tasks: any[]): void {
+    localStorage.setItem(this.storageKey, JSON.stringify(tasks));
+  }
 }
