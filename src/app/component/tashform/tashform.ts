@@ -1,15 +1,25 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule, DatePipe } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 
 type TaskStatus = 'Pending' | 'In Progress' | 'Completed';
+type ApiTaskStatus = 'TO_DO' | 'IN_PROGRESS' | 'DONE';
+
+interface ApiTask {
+  id?: number;
+  title: string;
+  description: string;
+  status: ApiTaskStatus;
+  createdAt?: Date;
+}
 
 interface Task {
-  id: number;
+  id?: number; 
   title: string;
   description: string;
   status: TaskStatus;
-  createdAt: Date;
+  createdAt?: Date;
 }
 
 @Component({
@@ -20,10 +30,13 @@ interface Task {
   styleUrl: './tashform.css',
   providers: [DatePipe]
 })
-export class Tashform {
+export class Tashform implements OnInit {
   private readonly fb = inject(FormBuilder);
+  private readonly http = inject(HttpClient);
 
-  // Reactive Form Structure
+  private readonly apiUrl = 'http://localhost:8080/api/tasks';
+  private readonly storageKey = 'task-manager.tasks';
+
   readonly taskForm = this.fb.group({
     title: this.fb.nonNullable.control('', [Validators.required, Validators.minLength(3)]),
     description: this.fb.nonNullable.control('', [Validators.required]),
@@ -36,19 +49,38 @@ export class Tashform {
   showModal = false;
   isEditMode = false;
   selectedTaskId: number | null = null;
+  tasks: Task[] = []; 
 
-  // Sample Data
-  tasks: Task[] = [
-    {
-      id: 1,
-      title: 'Design Premium UI',
-      description: 'Create a glassmorphism navbar and task cards.',
-      status: 'Completed',
-      createdAt: new Date(),
-    },
-  ];
+  private readonly statusToApiMap: Record<TaskStatus, ApiTaskStatus> = {
+    Pending: 'TO_DO',
+    'In Progress': 'IN_PROGRESS',
+    Completed: 'DONE',
+  };
 
-  // Modal Open/Edit Logic
+  private readonly apiToStatusMap: Record<ApiTaskStatus, TaskStatus> = {
+    TO_DO: 'Pending',
+    IN_PROGRESS: 'In Progress',
+    DONE: 'Completed',
+  };
+
+  ngOnInit(): void {
+    this.loadCachedTasks();
+    this.fetchTasks(); 
+  }
+
+  fetchTasks(): void {
+    this.http.get<ApiTask[]>(this.apiUrl).subscribe({
+      next: (res) => {
+        this.tasks = res.map((task) => this.mapApiTaskToUiTask(task));
+        this.saveTasksToCache();
+      },
+      error: (err) => {
+        this.loadCachedTasks();
+        console.error('Error fetching tasks', err);
+      }
+    });
+  }
+
   openModal(task?: Task): void {
     this.showModal = true;
     if (!task) {
@@ -59,7 +91,7 @@ export class Tashform {
     }
 
     this.isEditMode = true;
-    this.selectedTaskId = task.id;
+    this.selectedTaskId = task.id!;
     this.taskForm.patchValue({
       title: task.title,
       description: task.description,
@@ -67,62 +99,86 @@ export class Tashform {
     });
   }
 
+  saveTask(): void {
+    if (this.taskForm.invalid) return;
+
+    const formValue = this.taskForm.getRawValue();
+    const taskData: ApiTask = {
+      title: formValue.title,
+      description: formValue.description,
+      status: this.statusToApiMap[formValue.status],
+    };
+
+    if (this.isEditMode && this.selectedTaskId !== null) {
+
+      this.http.put<ApiTask>(`${this.apiUrl}/${this.selectedTaskId}`, taskData).subscribe({
+        next: () => {
+          this.fetchTasks();
+          this.closeModal();
+        },
+        error: (err) => console.error('Update failed', err)
+      });
+    } else {
+
+      this.http.post<ApiTask>(this.apiUrl, taskData).subscribe({
+        next: () => {
+          this.fetchTasks(); 
+          this.closeModal();
+        },
+        error: (err) => console.error('Create failed', err)
+      });
+    }
+  }
+
+  deleteTask(id: number): void {
+    if (confirm('Are you sure you want to delete this task?')) {
+      this.http.delete(`${this.apiUrl}/${id}`).subscribe({
+        next: () => {
+          this.tasks = this.tasks.filter((t) => t.id !== id);
+          this.saveTasksToCache();
+          if (this.selectedTaskId === id) this.closeModal();
+        },
+        error: (err) => console.error('Delete failed', err)
+      });
+    }
+  }
+
   closeModal(): void {
     this.showModal = false;
     this.isEditMode = false;
     this.selectedTaskId = null;
-    this.taskForm.reset({ title: '', description: '', status: 'Pending' });
+    this.taskForm.reset();
   }
-
-  // Create & Update Logic
-  saveTask(): void {
-    if (this.taskForm.invalid) return;
-
-    const raw = this.taskForm.getRawValue();
-
-    if (this.isEditMode && this.selectedTaskId !== null) {
-
-      this.tasks = this.tasks.map((task) =>
-        task.id === this.selectedTaskId
-          ? { ...task, title: raw.title, description: raw.description, status: raw.status }
-          : task
-      );
-    } else {
-
-      const nextId = this.tasks.length ? Math.max(...this.tasks.map((task) => task.id)) + 1 : 1;
-      const newTask: Task = {
-        id: nextId,
-        title: raw.title,
-        description: raw.description,
-        status: raw.status as TaskStatus,
-        createdAt: new Date(),
-      };
-      this.tasks = [...this.tasks, newTask];
-    }
-
-    this.closeModal();
-  }
-
-
-  deleteTask(id: number): void {
-    if (confirm('Are you sure you want to delete this task?')) {
-      this.tasks = this.tasks.filter((task) => task.id !== id);
-
-      if (this.selectedTaskId === id) {
-        this.closeModal();
-      }
-    }
-  }
-
 
   getStatusClass(status: string): string {
     switch (status) {
-      case 'Completed': 
-        return 'bg-emerald-50 text-emerald-600 border-emerald-100';
-      case 'In Progress': 
-        return 'bg-indigo-50 text-indigo-600 border-indigo-100';
-      default: 
-        return 'bg-orange-50 text-orange-600 border-orange-100';
+      case 'Completed': return 'bg-emerald-50 text-emerald-600 border-emerald-100';
+      case 'In Progress': return 'bg-indigo-50 text-indigo-600 border-indigo-100';
+      default: return 'bg-orange-50 text-orange-600 border-orange-100';
     }
+  }
+
+  private mapApiTaskToUiTask(task: ApiTask): Task {
+    return {
+      ...task,
+      status: this.apiToStatusMap[task.status] ?? 'Pending',
+    };
+  }
+
+  private loadCachedTasks(): void {
+    const cachedData = localStorage.getItem(this.storageKey);
+    if (!cachedData) {
+      return;
+    }
+
+    try {
+      this.tasks = JSON.parse(cachedData);
+    } catch {
+      localStorage.removeItem(this.storageKey);
+    }
+  }
+
+  private saveTasksToCache(): void {
+    localStorage.setItem(this.storageKey, JSON.stringify(this.tasks));
   }
 }
