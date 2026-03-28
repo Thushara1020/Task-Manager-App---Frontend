@@ -1,44 +1,50 @@
-<nav class="fixed top-6 left-1/2 -translate-x-1/2 w-[92%] max-w-6xl z-50 backdrop-blur-xl bg-white/80 border border-slate-200/50 px-8 py-3 rounded-[2rem] shadow-[0_15px_35px_rgba(0,0,0,0.05)] transition-all duration-500">
+<nav class="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl z-50 backdrop-blur-2xl bg-white/70 border border-white/40 px-6 py-3 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] transition-all duration-500">
   <div class="flex justify-between items-center">
     
     <div class="flex-1">
-      <div class="cursor-pointer group flex items-center space-x-2">
-        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
-          <span class="text-white font-black text-xs">T</span>
+      <div class="cursor-pointer group flex items-center space-x-3">
+        <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center group-hover:rotate-6 transition-all duration-500 shadow-lg shadow-blue-200">
+          <span class="text-white font-black text-sm tracking-tighter">TM</span>
         </div>
-        <span class="text-2xl font-black tracking-tighter text-slate-900 transition-all duration-300">
-          TASK <span class="text-blue-600">Manager</span>
+        <span class="text-xl font-black tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors duration-300">
+          TASK<span class="text-blue-600 font-light italic">Flow</span>
         </span>
       </div>
     </div>
 
-    <div class="hidden md:flex items-center space-x-1 bg-slate-100/50 p-1.5 rounded-full border border-slate-200/50">
-      <a routerLink="/" 
-         routerLinkActive="bg-white text-blue-600 shadow-sm border border-slate-100"
-         class="px-8 py-2.5 rounded-full text-slate-500 hover:text-slate-900 transition-all duration-300 font-bold text-sm tracking-wide">
+    <div class="hidden md:flex items-center space-x-1 bg-slate-200/30 p-1.5 rounded-full border border-white/50 backdrop-blur-md">
+      <a routerLink="/task" 
+         routerLinkActive="bg-white text-blue-600 shadow-md scale-105"
+         class="px-8 py-2.5 rounded-full text-slate-600 hover:text-blue-600 transition-all duration-300 font-bold text-xs uppercase tracking-widest">
         Home
       </a>
       
-      <a routerLink="/tasks" 
-         routerLinkActive="bg-white text-blue-600 shadow-sm border border-slate-100"
-         class="px-8 py-2.5 rounded-full text-slate-500 hover:text-slate-900 transition-all duration-300 font-bold text-sm tracking-wide">
+      <a routerLink="/tasksform" 
+         routerLinkActive="bg-white text-blue-600 shadow-md scale-105"
+         class="px-8 py-2.5 rounded-full text-slate-600 hover:text-blue-600 transition-all duration-300 font-bold text-xs uppercase tracking-widest">
         Dashboard
       </a>
     </div>
 
-    <div class="flex-1 flex justify-end items-center">
-      <a routerLink="/tasks" 
-         class="px-6 py-2.5 rounded-xl bg-slate-900 text-white font-bold text-xs uppercase tracking-[0.1em] shadow-lg shadow-slate-200 hover:bg-blue-600 hover:-translate-y-0.5 transition-all duration-300 active:scale-95">
-        + Create Task
+    <div class="flex-1 flex justify-end items-center space-x-3">
+      <a routerLink="/tasksform" 
+         class="hidden sm:flex px-5 py-2.5 rounded-2xl bg-slate-900 text-white font-bold text-[10px] uppercase tracking-widest hover:bg-blue-600 hover:shadow-[0_10px_20px_rgba(37,99,235,0.3)] hover:-translate-y-1 transition-all duration-300 active:scale-95 items-center">
+        <span class="mr-2 text-lg leading-none">+</span> Create
+      </a>
+    
+      <a routerLink="/sign_in" 
+         class="px-5 py-2.5 rounded-2xl bg-white border border-slate-200 text-slate-900 font-bold text-[10px] uppercase tracking-widest hover:border-blue-600 hover:text-blue-600 shadow-sm hover:shadow-md transition-all duration-300 active:scale-95 flex items-center">
+        <svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+        Sign In
       </a>
 
-      <div class="md:hidden ml-4 flex items-center">
-        <button (click)="isMenuOpen = !isMenuOpen" class="text-slate-600 hover:text-blue-600 transition-colors p-2 rounded-lg bg-slate-50">
-          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="md:hidden flex items-center">
+        <button (click)="isMenuOpen = !isMenuOpen" class="text-slate-600 hover:text-blue-600 transition-colors p-2.5 rounded-2xl bg-slate-100 border border-slate-200">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             @if (!isMenuOpen) {
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 8h16M4 16h16"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path>
             } @else {
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M6 18L18 6M6 6l12 12"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
             }
           </svg>
         </button>
@@ -47,9 +53,10 @@
   </div>
 
   @if (isMenuOpen) {
-  <div class="md:hidden mt-4 space-y-2 pb-4 animate-in slide-in-from-top-2 duration-300 border-t border-slate-100 pt-4">
-    <a routerLink="/" class="block px-6 py-3 text-slate-700 font-bold text-base hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-all">Home</a>
-    <a routerLink="/tasks" class="block px-6 py-3 text-blue-600 font-black text-base bg-blue-50/50 rounded-xl border border-blue-100">Dashboard</a>
+  <div class="md:hidden mt-4 space-y-2 pb-4 animate-in fade-in zoom-in-95 duration-300 border-t border-slate-100 pt-4 px-2">
+    <a routerLink="/task" class="block px-6 py-3 text-slate-700 font-bold text-sm hover:bg-blue-50 hover:text-blue-600 rounded-2xl transition-all">Home</a>
+    <a routerLink="/tasksform" class="block px-6 py-3 text-slate-700 font-bold text-sm hover:bg-blue-50 hover:text-blue-600 rounded-2xl transition-all">Dashboard</a>
+    <a routerLink="/tasksform" class="block px-6 py-4 text-center bg-blue-600 text-white font-black rounded-2xl shadow-lg shadow-blue-200">Create Task</a>
   </div>
   }
 </nav>
